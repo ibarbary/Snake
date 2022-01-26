@@ -4,11 +4,12 @@
 #include <conio.h>
 #include <windows.h>
 using namespace std;
+//Snake game
 
 bool gameOver;
 int length = 20;
 int width = 50;
-int x, y; // position of a snake part
+int x, y;            // position of snake head
 int fruitx, fruity; // position of fruit
 int score;
 char pressed;
@@ -87,7 +88,7 @@ void isOver()
 
 void Input ()
 {
-    if(_kbhit ())
+    if(_kbhit())
     {
         switch(_getch())
         {
@@ -114,6 +115,17 @@ void Input ()
     }
 }
 
+void ifFruitEaten()
+{
+    if(x == fruitx && y == fruity)
+    {
+        ++score;
+        body.push_back({body[body.size()-1].first, body[body.size()-1].second});
+
+        fruitx = rand()%(length-2);
+        fruity = rand()%(width-2);
+    }
+}
 void Action()
 {
     for(int i=body.size()-1; i>0; --i)
@@ -134,15 +146,10 @@ void Action()
     body[0].first = x;
     body[0].second = y;
 
-    if(x == fruitx && y == fruity)
-    {
-        ++score;
-        body.push_back({body[body.size()-1].first, body[body.size()-1].second});
-
-        fruitx = rand()%(length-2);
-        fruity = rand()%(width-2);
-    }
-
+    //Check if snake ate fruit
+    ifFruitEaten();
+    
+    //Check if game is over
     isOver();
 }
 
@@ -151,15 +158,16 @@ int main()
 
     Setup();
 
-    do{
-    Draw();
+    while(gameOver == false)
+    {
+        Draw();
 
-    Input();
+        Input();
 
-    Action();
-
-    Sleep(10);
-    }while(gameOver == false);
-
+        Action();
+        
+        Sleep(10); //controls speed of snake
+    };
+    
     return 0;
 }
