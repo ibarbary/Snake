@@ -7,8 +7,9 @@ using namespace std;
 //Snake game
 
 bool gameOver;
-int length = 20;
 int width = 50;
+int height = 20;
+// x->x axis  y->y axis
 int x, y;            // position of snake head
 int fruitx, fruity; // position of fruit
 int score;
@@ -20,13 +21,13 @@ void Setup()
     gameOver = false;
     score = 0;
     // Places the snake in the middle
-    x = length / 2;
-    y = width / 2;
+    x = width / 2;
+    y = height / 2;
     body.push_back({x, y});
 
     //Spawns the fruit in random places
-    fruitx = rand()%length;
-    fruity = rand()%width;
+    fruitx = rand()%width;
+    fruity = rand()%height;
 }
 
 void Draw()
@@ -37,15 +38,15 @@ void Draw()
 
     cout<<endl;
 
-    for(int i=0; i<length; ++i)
+    for(int i=0; i<height; ++i)
     {
         for(int j=0; j<width+2; ++j)
         {
             if(j == 0)
             cout<<"#";
-            else if(i == x && j == y)
+            else if(i == y && j == x)
             cout<<"O";
-            else if(i == fruitx && j == fruity)
+            else if(i == fruity && j == fruitx)
             cout<<"F";
             else if(j == width+1)
             cout<<"#"<<endl;
@@ -54,9 +55,9 @@ void Draw()
                 bool r = false;
                 for(int k=1; k<body.size(); ++k)
                 {
-                    if(i == body[k].first && j == body[k].second)
+                    if(j == body[k].first && i == body[k].second)
                     {
-                        cout<<"O";
+                        cout<<"o";
                         r = true;
                     }
                 }
@@ -76,14 +77,14 @@ void Draw()
 void isOver()
 {
     //Lose if hit wall
-    if(x == length || x < 0 || y == width+1 || y == 0)gameOver = true;
+    if(y == height || y < 0 || x == width+1 || x == 0)gameOver = true;
 
     /*//Can Go through wall
-    if(x == length+1)x = 1;
-    else if(x < 1)x = length;
+    if(y == height+1)y = 1;
+    else if(y < 1)y = height;
 
-    if(y == width+2)y = 1;
-    else if(y == 1)y = width+1;*/
+    if(x == width+2)x = 1;
+    else if(x == 1)x = width+1;*/
 }
 
 void Input ()
@@ -122,8 +123,8 @@ void ifFruitEaten()
         ++score;
         body.push_back({body[body.size()-1].first, body[body.size()-1].second});
 
-        fruitx = rand()%(length-2);
-        fruity = rand()%(width-2);
+        fruitx = rand()%(width-2);
+        fruity = rand()%(height-2);
     }
 }
 void Action()
@@ -135,20 +136,20 @@ void Action()
     }
 
     if(pressed == 'w')
-    --x;
-    else if(pressed == 's')
-    ++x;
-    else if(pressed == 'a')
     --y;
-    else if(pressed == 'd')
+    else if(pressed == 's')
     ++y;
+    else if(pressed == 'a')
+    --x;
+    else if(pressed == 'd')
+    ++x;
 
     body[0].first = x;
     body[0].second = y;
 
     //Check if snake ate fruit
     ifFruitEaten();
-    
+
     //Check if game is over
     isOver();
 }
@@ -165,9 +166,9 @@ int main()
         Input();
 
         Action();
-        
-        Sleep(10); //controls speed of snake
+
+        Sleep(20); //controls speed of snake
     };
-    
+
     return 0;
 }
